@@ -18,6 +18,11 @@ jobs:
     runs-on: [ default ]
     name: "Prepare E2E Scenarios"
     steps:
+      - name: Harden the runner (Audit all outbound calls)
+        uses: step-security/harden-runner@4d991eb9b905ef189e4c376166672c3f2f230481 # v2.11.0
+        with:
+          egress-policy: audit
+
       - name: "Checkout"
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
 
@@ -41,9 +46,14 @@ jobs:
         e2es: ${{fromJson(needs.init.outputs.tests)}}
     steps:
       # run the e2e tests using composite common/workflows/e2e action
+      - name: Harden the runner (Audit all outbound calls)
+        uses: step-security/harden-runner@4d991eb9b905ef189e4c376166672c3f2f230481 # v2.11.0
+        with:
+          egress-policy: audit
+
       - name: "E2E"
         id: e2e
-        uses: cloudoperators/common/workflows/e2e@main
+        uses: cloudoperators/common/workflows/e2e@613b4beaa5b3a3e5bd31777778323431c92e77c4 # main
         with:
           k8s-version: ${{ matrix.k8s-version }}
           scenario: ${{ matrix.e2es }}
@@ -65,6 +75,11 @@ jobs:
     runs-on: [ default ]
     needs: [ e2e ]
     steps:
+      - name: Harden the runner (Audit all outbound calls)
+        uses: step-security/harden-runner@4d991eb9b905ef189e4c376166672c3f2f230481 # v2.11.0
+        with:
+          egress-policy: audit
+
       - name: "Merge Uploads"
         continue-on-error: true # If there are no artifacts available, the merge step will fail so we need to continue on error
         uses: actions/upload-artifact/merge@4cec3d8aa04e39d1a68397de0c4cd6fb9dce8ec1 # v4
@@ -81,6 +96,11 @@ jobs:
     runs-on: [ default ]
     if: always()
     steps:
+      - name: Harden the runner (Audit all outbound calls)
+        uses: step-security/harden-runner@4d991eb9b905ef189e4c376166672c3f2f230481 # v2.11.0
+        with:
+          egress-policy: audit
+
       - name: "Check if e2e passed"
         run: |
           if [ "${{ needs.e2e.result }}" == "success" ]; then

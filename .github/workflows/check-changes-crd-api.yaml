@@ -17,12 +17,20 @@ on:
     paths:
       - "pkg/apis/greenhouse/v1alpha1/**"
 
+permissions:
+  contents: read
+
 jobs:
   generate-docs-types-specs:
     runs-on: [default]
     permissions:
       contents: write
     steps:
+      - name: Harden the runner (Audit all outbound calls)
+        uses: step-security/harden-runner@v2
+        with:
+          egress-policy: audit
+
       - name: Checkout
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
         with:

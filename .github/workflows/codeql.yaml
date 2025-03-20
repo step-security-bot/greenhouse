@@ -10,6 +10,9 @@ on:
   schedule:
     - cron: "20 08 * * 1"
 
+permissions:
+  contents: read
+
 jobs:
   codeql:
     permissions:
